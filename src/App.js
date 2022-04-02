@@ -1,16 +1,6 @@
-import {
-  Button,
-  EditableText,
-  InputGroup,
-  Toaster,
-  Position,
-} from "@blueprintjs/core";
+import { Button, EditableText, InputGroup } from "@blueprintjs/core";
 import axios from "axios";
 import { useEffect, useState } from "react";
-
-const AppToaster = Toaster.create({
-  position: Position.TOP,
-});
 
 function App() {
   const [employees, setEmployees] = useState([]);
@@ -18,8 +8,6 @@ function App() {
   const [newName, setNewName] = useState("");
   const [newDepartment, setNewDepartment] = useState("");
   const [newAddress, setNewAddress] = useState("");
-
-  console.log({ newDepartment });
 
   useEffect(() => {
     axios.get("http://localhost:8001/").then((response) => {
@@ -54,40 +42,6 @@ function App() {
     }
   };
 
-  const onChangeHandler = (id, key, value) => {
-    console.log({ id, key, value });
-    setEmployees((values) => {
-      return values.map((item) =>
-        item.id === id ? { ...item, [key]: value } : item
-      );
-    });
-  };
-
-  const updateAddress = (id) => {
-    const data = employees.find((item) => item.id === id);
-    axios.put(`http://localhost:8001/${id}`, data).then((response) => {
-      AppToaster.show({
-        message: "Data updated successfully",
-        intent: "success",
-        timeout: 3000,
-      });
-    });
-  };
-
-  const deleteEmployee = (id) => {
-    axios.delete(`http://localhost:8001/${id}`).then((response) => {
-      setEmployees((values) => {
-        return values.filter((item) => item.id !== id);
-      });
-
-      AppToaster.show({
-        message: "Employee deleted successfully",
-        intent: "success",
-        timeout: 3000,
-      });
-    });
-  };
-
   return (
     <div className="App">
       <table className="bp4-html-table .modifier">
@@ -109,19 +63,12 @@ function App() {
                 <td>{name}</td>
                 <td>{department}</td>
                 <td>
-                  <EditableText
-                    value={address}
-                    onChange={(value) => onChangeHandler(id, "address", value)}
-                  />
+                  <EditableText value={address} />
                 </td>
                 <td>
-                  <Button intent="primary" onClick={() => updateAddress(id)}>
-                    Update
-                  </Button>
+                  <Button intent="primary">Update</Button>
                   &nbsp;
-                  <Button intent="danger" onClick={() => deleteEmployee(id)}>
-                    Delete
-                  </Button>
+                  <Button intent="danger">Delete</Button>
                 </td>
               </tr>
             );
