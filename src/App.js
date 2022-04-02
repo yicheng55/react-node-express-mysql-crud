@@ -1,6 +1,16 @@
-import { Button, EditableText, InputGroup } from "@blueprintjs/core";
+import {
+  Button,
+  EditableText,
+  InputGroup,
+  Toaster,
+  Position,
+} from "@blueprintjs/core";
 import axios from "axios";
 import { useEffect, useState } from "react";
+
+const AppToaster = Toaster.create({
+  position: Position.TOP,
+});
 
 function App() {
   const [employees, setEmployees] = useState([]);
@@ -42,6 +52,40 @@ function App() {
     }
   };
 
+  const onChangeHandler = (id, key, value) => {
+    console.log({ id, key, value });
+    setEmployees((values) => {
+      return values.map((item) =>
+        item.id === id ? { ...item, [key]: value } : item
+      );
+    });
+  };
+
+  const updateAddress = (id) => {
+    const data = employees.find((item) => item.id === id);
+    axios.put(`http://localhost:8001/${id}`, data).then((response) => {
+      AppToaster.show({
+        message: "Data updated successfully",
+        intent: "success",
+        timeout: 3000,
+      });
+    });
+  };
+
+  const deleteEmployee = (id) => {
+    axios.delete(`http://localhost:8001/${id}`).then((response) => {
+      setEmployees((values) => {
+        return values.filter((item) => item.id !== id);
+      });
+
+      AppToaster.show({
+        message: "Employee deleted successfully",
+        intent: "success",
+        timeout: 3000,
+      });
+    });
+  };
+
   return (
     <div className="App">
       <table className="bp4-html-table .modifier">
@@ -63,12 +107,19 @@ function App() {
                 <td>{name}</td>
                 <td>{department}</td>
                 <td>
-                  <EditableText value={address} />
+                  <EditableText
+                    value={address}
+                    onChange={(value) => onChangeHandler(id, "address", value)}
+                  />
                 </td>
                 <td>
-                  <Button intent="primary">Update</Button>
+                  <Button intent="primary" onClick={() => updateAddress(id)}>
+                    Update
+                  </Button>
                   &nbsp;
-                  <Button intent="danger">Delete</Button>
+                  <Button intent="danger" onClick={() => deleteEmployee(id)}>
+                    Delete
+                  </Button>
                 </td>
               </tr>
             );
