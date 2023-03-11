@@ -136,12 +136,12 @@ function App() {
               />
             </td>
             <td>
-              <div class="bp4-html-select .modifier">
+              <div className="bp4-html-select .modifier">
                 <select
                   onChange={(e) => setNewDepartment(e.target.value)}
                   value={newDepartment}
                 >
-                  <option selected value="">
+                  <option defaultValue ="none">
                     Select department
                   </option>
                   {departments.map((department) => {
@@ -153,7 +153,7 @@ function App() {
                     );
                   })}
                 </select>
-                <span class="bp4-icon bp4-icon-double-caret-vertical"></span>
+                <span className="bp4-icon bp4-icon-double-caret-vertical"></span>
               </div>
             </td>
             <td>
